@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArticleCard } from "../components/ArticleCard.jsx";
 import { ContentDialog } from "../components/ContentDialog.jsx";
+import { DragonFacts } from "../components/DragonFacts.jsx";
 import { PartCard } from "../components/PartCard.jsx";
 import { SiteFooter, SiteHeader } from "../components/SiteLayout.jsx";
 import { useContent } from "../hooks/useContent.js";
@@ -34,6 +35,7 @@ export function PublicPage() {
       </>}
     </main>
     <SiteFooter/>
+    <DragonFacts/>
     {selected && <ContentDialog item={selected.item} type={selected.type} onClose={() => setSelected(null)}/>}
   </>;
 }
