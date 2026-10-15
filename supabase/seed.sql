@@ -27,7 +27,7 @@ select seed.title, seed.body, seed.author_name
 from (values
   ('Reading resistor colour bands', 'Each band is a digit, the next-to-last is a multiplier and the last is tolerance. Brown-black-red-gold means 1, 0, ×100 = 1 kΩ, ±5%. Start reading from the side opposite the gold or silver band.', 'junkdrawer'),
   ('Arduino vs ESP32: which should you pick?', 'Pick an Arduino Uno to learn the basics: it is simple, 5 V and forgiving. Pick an ESP32 when you need Wi-Fi, Bluetooth or more speed, and remember its pins are 3.3 V only.', 'junkdrawer'),
-  ('A transistor is just a switch you control with a signal', 'Apply a small current to an NPN transistor\'s base and it lets a larger current flow from collector to emitter. That is how a 5 V pin can drive a motor or a relay safely.', 'junkdrawer')
+  ('A transistor is just a switch you control with a signal', 'Apply a small current to an NPN transistor''s base and it lets a larger current flow from collector to emitter. That is how a 5 V pin can drive a motor or a relay safely.', 'junkdrawer')
 ) as seed(title, body, author_name)
 where not exists (
   select 1 from public.articles existing where existing.title = seed.title
