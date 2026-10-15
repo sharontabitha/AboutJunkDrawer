@@ -1,15 +1,46 @@
-const sessionKey = "jd_admin";
+import { getSupabase } from "./supabaseClient.js";
+
+async function getAdminUser() {
+  const supabase = getSupabase();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!user) return null;
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError) throw profileError;
+  return profile?.role === "admin" ? user : null;
+}
 
 export const authService = {
-  isSignedIn() {
-    return sessionStorage.getItem(sessionKey) === "1";
+  async signIn(email, password) {
+    const supabase = getSupabase();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+
+    const user = await getAdminUser();
+    if (!user) {
+      await supabase.auth.signOut({ scope: "local" });
+      throw new Error("This account does not have admin access.");
+    }
+    return user;
   },
-  signIn(email, password) {
-    if (email.trim().toLowerCase() !== "niishimurra@gmail.com" || password !== "drawer123") return false;
-    sessionStorage.setItem(sessionKey, "1");
-    return true;
+  getCurrentAdmin: getAdminUser,
+  onAuthStateChange(callback) {
+    return getSupabase().auth.onAuthStateChange(callback);
   },
-  signOut() {
-    sessionStorage.removeItem(sessionKey);
+  async signOut() {
+    const { error } = await getSupabase().auth.signOut({ scope: "local" });
+    if (error) throw error;
+  },
+  async requestPasswordReset(email) {
+    const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/admin.html`
+    });
+    if (error) throw error;
   }
 };

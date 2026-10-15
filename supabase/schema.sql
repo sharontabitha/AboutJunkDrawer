@@ -68,6 +68,10 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
+insert into public.profiles (id, role)
+select id, 'user' from auth.users
+on conflict (id) do nothing;
+
 alter table public.profiles enable row level security;
 alter table public.parts enable row level security;
 alter table public.articles enable row level security;
@@ -111,7 +115,12 @@ create policy "Admins delete parts"
 drop policy if exists "Anyone reads published articles" on public.articles;
 create policy "Anyone reads published articles"
   on public.articles for select to anon, authenticated
-  using (published or (select private.is_admin()));
+  using (published);
+
+drop policy if exists "Admins read all articles" on public.articles;
+create policy "Admins read all articles"
+  on public.articles for select to authenticated
+  using ((select private.is_admin()));
 
 drop policy if exists "Admins insert articles" on public.articles;
 create policy "Admins insert articles"

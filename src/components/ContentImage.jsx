@@ -2,7 +2,7 @@ import { Illustration } from "./Illustration.jsx";
 
 export function ContentImage({ item, type }) {
   const label = item.name || item.title || "Electronics illustration";
-  if (item.img?.startsWith("data:image/")) {
+  if (item.img?.startsWith("data:image/") || item.img?.startsWith("https://")) {
     return <img className="pic" src={item.img} alt={label} loading="lazy"/>;
   }
   if (type === "article") {
