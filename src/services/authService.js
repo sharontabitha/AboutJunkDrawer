@@ -2,6 +2,10 @@ import { getSupabase } from "./supabaseClient.js";
 
 async function getAdminUser() {
   const supabase = getSupabase();
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  if (!session) return null;
+
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError) throw userError;
   if (!user) return null;
